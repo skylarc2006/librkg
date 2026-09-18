@@ -1,0 +1,6 @@
+#ifndef LIBRKG_TEST_IN_GAME_TIME_HPP
+#define LIBRKG_TEST_IN_GAME_TIME_HPP
+
+void testInGameTime();
+
+#endif //LIBRKG_TEST_IN_GAME_TIME_HPP

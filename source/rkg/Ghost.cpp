@@ -1,4 +1,4 @@
-#include "librkg.hpp"
+#include "../../include/rkg/Ghost.hpp"
 
 #include <iostream>
 
