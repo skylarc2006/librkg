@@ -3,4 +3,4 @@
 
 void testInGameTime();
 
-#endif //LIBRKG_TEST_IN_GAME_TIME_HPP
+#endif // LIBRKG_TEST_IN_GAME_TIME_HPP
