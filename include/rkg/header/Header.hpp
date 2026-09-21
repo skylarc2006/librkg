@@ -1,13 +1,13 @@
 #ifndef RKG_HEADER_HPP
 #define RKG_HEADER_HPP
 
-#include <cstdint>
-#include <vector>
-
 #include <rkg/header/InGameTime.hpp>
 
+namespace rkg::header {
+
+/// @brief A class representing the header of a Mario Kart Wii RKG ghost file.
 class Header {
-    InGameTime m_finishTime{InGameTime::create(0, 0, 0).value()};
+    rkg::header::InGameTime m_finishTime{rkg::header::InGameTime::create(0, 0, 0).value()};
     // SlotId m_slotId{};
     // Combo m_combo{};
     // Date m_dateSet{};
@@ -22,5 +22,7 @@ class Header {
     // Location m_location{};
     // Mii m_mii{};
 };
+
+} // namespace rkg::header
 
 #endif // RKG_HEADER_HPP

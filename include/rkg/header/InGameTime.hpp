@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <expected>
 
+namespace rkg::header {
+
 /// @brief A class representing an in game lap or race finish time.
 class InGameTime {
 public:
@@ -67,7 +69,7 @@ public:
     friend constexpr InGameTime operator-(const InGameTime &i1, const InGameTime &i2);
 };
 
-[[nodiscard]] constexpr std::uint32_t InGameTime::totalMilliseconds() const {
+constexpr std::uint32_t InGameTime::totalMilliseconds() const {
     return minutes() * 60'000U + seconds() * 1'000U + milliseconds();
 }
 
@@ -75,8 +77,9 @@ constexpr InGameTime::InGameTime(const std::uint16_t minutes, const std::uint16_
         const std::uint16_t milliseconds)
     : m_minutes{minutes}, m_seconds{seconds}, m_milliseconds{milliseconds} {}
 
-constexpr std::expected<InGameTime, InGameTime::Error> InGameTime::create(const std::uint16_t minutes,
-        const std::uint16_t seconds, const std::uint16_t milliseconds) {
+constexpr std::expected<InGameTime, InGameTime::Error> InGameTime::create(
+        const std::uint16_t minutes, const std::uint16_t seconds,
+        const std::uint16_t milliseconds) {
     if (minutes > kMaxMinutes || seconds > kMaxSeconds || milliseconds > kMaxMilliseconds) {
         return std::unexpected(Error::InvalidInGameTimeElement);
     }
@@ -139,5 +142,7 @@ constexpr InGameTime operator-(const InGameTime &i1, const InGameTime &i2) {
     const auto timer{InGameTime::totalMillisecondsToTimer(totalMilliseconds)};
     return InGameTime{timer.minutes, timer.seconds, timer.milliseconds};
 }
+
+} // namespace rkg::header
 
 #endif // RKG_IN_GAME_TIME_HPP

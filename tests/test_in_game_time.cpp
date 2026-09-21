@@ -3,18 +3,20 @@
 #include <expected>
 #include <rkg/header/InGameTime.hpp>
 
+using namespace rkg::header;
+
 static void testInvalidMinutesCreate() {
-    const auto time{InGameTime::create(103, 0, 0)};
+    constexpr auto time{InGameTime::create(103, 0, 0)};
     assert(time == std::unexpected(InGameTime::Error::InvalidInGameTimeElement));
 }
 
 static void testInvalidSecondsCreate() {
-    const auto time{InGameTime::create(0, 75, 0)};
+    constexpr auto time{InGameTime::create(0, 75, 0)};
     assert(time == std::unexpected(InGameTime::Error::InvalidInGameTimeElement));
 }
 
 static void testInvalidMillisecondsCreate() {
-    const auto time{InGameTime::create(0, 0, 1564)};
+    constexpr auto time{InGameTime::create(0, 0, 1564)};
     assert(time == std::unexpected(InGameTime::Error::InvalidInGameTimeElement));
 }
 
@@ -63,42 +65,43 @@ static void testValidInGameTimes() {
 }
 
 static void testAddition() {
-    const InGameTime time1{InGameTime::createFromTotalMilliseconds(59'796).value()};
-    const InGameTime time2{InGameTime::createFromTotalMilliseconds(58'000).value()};
+    constexpr InGameTime time1{InGameTime::createFromTotalMilliseconds(59'796).value()};
+    constexpr InGameTime time2{InGameTime::createFromTotalMilliseconds(58'000).value()};
 
-    assert((time1 + time2).totalMilliseconds() == time1.totalMilliseconds() + time2.totalMilliseconds());
+    assert((time1 + time2).totalMilliseconds() ==
+            time1.totalMilliseconds() + time2.totalMilliseconds());
 }
 
 static void testSubtraction() {
-    const InGameTime time1{InGameTime::createFromTotalMilliseconds(59'796).value()};
-    const InGameTime time2{InGameTime::createFromTotalMilliseconds(58'000).value()};
+    constexpr InGameTime time1{InGameTime::createFromTotalMilliseconds(59'796).value()};
+    constexpr InGameTime time2{InGameTime::createFromTotalMilliseconds(58'000).value()};
 
-    assert((time1 - time2).totalMilliseconds() == time1.totalMilliseconds() - time2.totalMilliseconds());
+    assert((time1 - time2).totalMilliseconds() ==
+            time1.totalMilliseconds() - time2.totalMilliseconds());
 }
 
 static void testMaxAddition() {
-    const InGameTime time1{InGameTime::createFromTotalMilliseconds(5'999'998).value()};
-    const InGameTime time2{InGameTime::createFromTotalMilliseconds(10).value()};
+    constexpr InGameTime time1{InGameTime::createFromTotalMilliseconds(5'999'998).value()};
+    constexpr InGameTime time2{InGameTime::createFromTotalMilliseconds(10).value()};
 
     assert((time1 + time2).totalMilliseconds() == InGameTime::kMaxTotalMilliseconds);
 }
 
 static void testMinSubtraction() {
-    const InGameTime time1{InGameTime::createFromTotalMilliseconds(5'999'998).value()};
-    const InGameTime time2{InGameTime::createFromTotalMilliseconds(10).value()};
+    constexpr InGameTime time1{InGameTime::createFromTotalMilliseconds(5'999'998).value()};
+    constexpr InGameTime time2{InGameTime::createFromTotalMilliseconds(10).value()};
 
     assert((time2 - time1).totalMilliseconds() == 0);
 }
 
 static void testCreateFromTotalMilliseconds() {
-    const InGameTime time1{InGameTime::createFromTotalMilliseconds(999'999).value()};
+    constexpr InGameTime time1{InGameTime::createFromTotalMilliseconds(999'999).value()};
     assert(time1.totalMilliseconds() == 999'999);
 }
 
 static void testInvalidCreateFromTotalMilliseconds() {
-    const auto time1{InGameTime::createFromTotalMilliseconds(9'999'999)};
-    assert(time1 ==
-        std::unexpected(InGameTime::Error::InvalidInGameTimeElement));
+    constexpr auto time1{InGameTime::createFromTotalMilliseconds(9'999'999)};
+    assert(time1 == std::unexpected(InGameTime::Error::InvalidInGameTimeElement));
 }
 
 void testInGameTime() {
