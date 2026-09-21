@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <expected>
+#include <iostream>
+#include <iomanip>
 
 namespace rkg::header {
 
@@ -141,6 +143,19 @@ constexpr InGameTime operator-(const InGameTime &i1, const InGameTime &i2) {
                     0U};
     const auto timer{InGameTime::totalMillisecondsToTimer(totalMilliseconds)};
     return InGameTime{timer.minutes, timer.seconds, timer.milliseconds};
+}
+
+/// @brief Formats InGameTime object as 'MM:SS.sss'.
+constexpr std::ostream& operator<<(std::ostream& out, const InGameTime& inGameTime) {
+    // grab current ostream fill to restore after sending in game time
+    char previousFill = out.fill();
+
+    out << std::setfill('0') << std::setw(2) << inGameTime.minutes() << ':'
+        << std::setw(2) << inGameTime.seconds() << '.' << std::setw(3)
+        << inGameTime.milliseconds();
+
+    out << std::setfill(previousFill);
+    return out;
 }
 
 } // namespace rkg::header

@@ -104,6 +104,11 @@ static void testInvalidCreateFromTotalMilliseconds() {
     assert(time1 == std::unexpected(InGameTime::Error::InvalidInGameTimeElement));
 }
 
+static void testPrintInGameTime() {
+    constexpr InGameTime time1{InGameTime::create(1, 44, 497).value()};
+    std::cout << time1 << '\n';
+}
+
 void testInGameTime() {
     testInvalidMinutesCreate();
     testInvalidSecondsCreate();
@@ -118,4 +123,5 @@ void testInGameTime() {
     testMinSubtraction();
     testCreateFromTotalMilliseconds();
     testInvalidCreateFromTotalMilliseconds();
+    testPrintInGameTime();
 }
