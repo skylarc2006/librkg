@@ -24,19 +24,20 @@ set(COMMON_CXX_FLAGS
 )
 
 # Source files
-file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
-        "${CMAKE_SOURCE_DIR}/source/*.cpp"
-)
+# file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
+#         "${CMAKE_SOURCE_DIR}/source/*.cpp"
+# )
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
         "${CMAKE_SOURCE_DIR}/tests/*.cpp"
 )
 
-add_library(librkg STATIC ${SOURCE_FILES})
-set_target_properties(librkg PROPERTIES OUTPUT_NAME "rkg")
-target_include_directories(librkg PUBLIC "${CMAKE_SOURCE_DIR}/include")
-target_compile_options(librkg PRIVATE ${COMMON_CXX_FLAGS})
-target_compile_features(librkg PUBLIC cxx_std_23)
+# add_library(librkg STATIC ${SOURCE_FILES})
+add_library(librkg INTERFACE)
+# set_target_properties(librkg PROPERTIES OUTPUT_NAME "rkg")
+target_include_directories(librkg INTERFACE "${CMAKE_SOURCE_DIR}/include")
+target_compile_options(librkg INTERFACE ${COMMON_CXX_FLAGS})
+target_compile_features(librkg INTERFACE cxx_std_23)
 
 add_executable(rkg ${TEST_SOURCES})
 target_link_libraries(rkg PRIVATE librkg)
