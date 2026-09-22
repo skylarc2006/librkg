@@ -1,10 +1,11 @@
 #ifndef RKG_IN_GAME_TIME_HPP
 #define RKG_IN_GAME_TIME_HPP
 
+#include <compare>
 #include <cstdint>
 #include <expected>
-#include <iostream>
 #include <iomanip>
+#include <ostream>
 
 namespace rkg::header {
 
@@ -67,8 +68,11 @@ public:
     constexpr std::expected<void, InGameTime::Error> setSeconds(std::uint16_t seconds);
     constexpr std::expected<void, InGameTime::Error> setMilliseconds(std::uint16_t milliseconds);
 
-    friend constexpr InGameTime operator+(const InGameTime &i1, const InGameTime &i2);
-    friend constexpr InGameTime operator-(const InGameTime &i1, const InGameTime &i2);
+    constexpr InGameTime operator+(const InGameTime &other) const;
+    constexpr InGameTime operator-(const InGameTime &other) const;
+    constexpr InGameTime &operator+=(const InGameTime &other);
+    constexpr InGameTime &operator-=(const InGameTime &other);
+    constexpr auto operator<=>(const InGameTime &other) const = default;
 };
 
 constexpr std::uint32_t InGameTime::totalMilliseconds() const {
@@ -125,34 +129,52 @@ constexpr std::expected<void, InGameTime::Error> InGameTime::setMilliseconds(
     return {};
 }
 
-/// @brief Adds two InGameTime objects, clamping time to 99m 59s 999ms if the result exceeds that.
-constexpr InGameTime operator+(const InGameTime &i1, const InGameTime &i2) {
-    std::uint32_t totalMilliseconds{i1.totalMilliseconds() + i2.totalMilliseconds()};
+constexpr InGameTime &InGameTime::operator+=(const InGameTime &other) {
+    std::uint32_t total{totalMilliseconds() + other.totalMilliseconds()};
 
-    if (totalMilliseconds > InGameTime::kMaxTotalMilliseconds) {
-        totalMilliseconds = InGameTime::kMaxTotalMilliseconds;
+    if (total > kMaxTotalMilliseconds) {
+        total = kMaxTotalMilliseconds;
     }
-    const auto timer{InGameTime::totalMillisecondsToTimer(totalMilliseconds)};
-    return InGameTime{timer.minutes, timer.seconds, timer.milliseconds};
+    const auto [minutes, seconds, milliseconds]{totalMillisecondsToTimer(total)};
+    m_minutes = minutes;
+    m_seconds = seconds;
+    m_milliseconds = milliseconds;
+    return *this;
 }
 
-/// @brief Adds two InGameTime objects, clamping time to 0m 0s 000ms if the result exceeds that.
-constexpr InGameTime operator-(const InGameTime &i1, const InGameTime &i2) {
-    const std::uint32_t totalMilliseconds{i1.totalMilliseconds() > i2.totalMilliseconds() ?
-                    i1.totalMilliseconds() - i2.totalMilliseconds() :
+constexpr InGameTime &InGameTime::operator-=(const InGameTime &other) {
+    const std::uint32_t total{totalMilliseconds() > other.totalMilliseconds() ?
+                    totalMilliseconds() - other.totalMilliseconds() :
                     0U};
-    const auto timer{InGameTime::totalMillisecondsToTimer(totalMilliseconds)};
-    return InGameTime{timer.minutes, timer.seconds, timer.milliseconds};
+    const auto [minutes, seconds, milliseconds]{totalMillisecondsToTimer(total)};
+    m_minutes = minutes;
+    m_seconds = seconds;
+    m_milliseconds = milliseconds;
+    return *this;
+}
+
+/// @brief Adds two InGameTime objects, clamping time to 99m 59s 999ms if the result exceeds that.
+constexpr InGameTime InGameTime::operator+(const InGameTime &other) const {
+    InGameTime result{*this};
+    result += other;
+    return result;
+}
+
+/// @brief Subtracts two InGameTime objects, clamping time to 0m 0s 000ms if the result exceeds
+/// that.
+constexpr InGameTime InGameTime::operator-(const InGameTime &other) const {
+    InGameTime result{*this};
+    result -= other;
+    return result;
 }
 
 /// @brief Formats InGameTime object as 'MM:SS.sss'.
-constexpr std::ostream& operator<<(std::ostream& out, const InGameTime& inGameTime) {
+inline std::ostream &operator<<(std::ostream &out, const InGameTime &inGameTime) {
     // grab current ostream fill to restore after sending in game time
-    char previousFill = out.fill();
+    const char previousFill = out.fill();
 
-    out << std::setfill('0') << std::setw(2) << inGameTime.minutes() << ':'
-        << std::setw(2) << inGameTime.seconds() << '.' << std::setw(3)
-        << inGameTime.milliseconds();
+    out << std::setfill('0') << std::setw(2) << inGameTime.minutes() << ':' << std::setw(2)
+        << inGameTime.seconds() << '.' << std::setw(3) << inGameTime.milliseconds();
 
     out << std::setfill(previousFill);
     return out;

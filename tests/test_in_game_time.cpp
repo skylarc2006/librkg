@@ -1,6 +1,7 @@
 #include "test_in_game_time.hpp"
 #include <cassert>
 #include <expected>
+#include <iostream>
 #include <rkg/header/InGameTime.hpp>
 
 using namespace rkg::header;
@@ -109,6 +110,22 @@ static void testPrintInGameTime() {
     std::cout << time1 << '\n';
 }
 
+static void testComparingInGameTime() {
+    constexpr InGameTime time1{InGameTime::create(0, 5, 399).value()};
+    constexpr InGameTime time2{InGameTime::create(1, 3, 904).value()};
+    constexpr InGameTime time3{InGameTime::create(1, 44, 497).value()};
+    constexpr InGameTime time4{InGameTime::create(1, 3, 904).value()};
+
+    assert(time1 < time2);
+    assert(time3 > time2);
+    assert(time2 == time4);
+    assert(time4 >= time2);
+    assert(time2 <= time4);
+    assert(time1 != time4);
+    assert(time4 <= time2);
+    assert(time2 >= time4);
+}
+
 void testInGameTime() {
     testInvalidMinutesCreate();
     testInvalidSecondsCreate();
@@ -124,4 +141,5 @@ void testInGameTime() {
     testCreateFromTotalMilliseconds();
     testInvalidCreateFromTotalMilliseconds();
     testPrintInGameTime();
+    testComparingInGameTime();
 }
