@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.12)
 project(librkg)
 
 # Compiler and flags
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -37,7 +37,7 @@ add_library(librkg INTERFACE)
 # set_target_properties(librkg PROPERTIES OUTPUT_NAME "rkg")
 target_include_directories(librkg INTERFACE "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(librkg INTERFACE ${COMMON_CXX_FLAGS})
-target_compile_features(librkg INTERFACE cxx_std_23)
+target_compile_features(librkg INTERFACE cxx_std_17)
 
 add_executable(rkg ${TEST_SOURCES})
 target_link_libraries(rkg PRIVATE librkg)

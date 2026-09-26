@@ -1,0 +1,58 @@
+#ifndef RKG_CHARACTER_HPP
+#define RKG_CHARACTER_HPP
+namespace rkg::header::combo {
+
+enum class Character {
+    Mario = 0x00,
+    BabyPeach = 0x01,
+    Waluigi = 0x02,
+    Bowser = 0x03,
+    BabyDaisy = 0x04,
+    DryBones = 0x05,
+    BabyMario = 0x06,
+    Luigi = 0x07,
+    Toad = 0x08,
+    DonkeyKong = 0x09,
+    Yoshi = 0x0A,
+    Wario = 0x0B,
+    BabyLuigi = 0x0C,
+    Toadette = 0x0D,
+    KoopaTroopa = 0x0E,
+    Daisy = 0x0F,
+    Peach = 0x10,
+    Birdo = 0x11,
+    DiddyKong = 0x12,
+    KingBoo = 0x13,
+    BowserJr = 0x14,
+    DryBowser = 0x15,
+    FunkyKong = 0x16,
+    Rosalina = 0x17,
+    SmallMiiOutfitAMale = 0x18,
+    SmallMiiOutfitAFemale = 0x19,
+    SmallMiiOutfitBMale = 0x1A,
+    SmallMiiOutfitBFemale = 0x1B,
+    SmallMiiOutfitCMale = 0x1C,
+    SmallMiiOutfitCFemale = 0x1D,
+    MediumMiiOutfitAMale = 0x1E,
+    MediumMiiOutfitAFemale = 0x1F,
+    MediumMiiOutfitBMale = 0x20,
+    MediumMiiOutfitBFemale = 0x21,
+    MediumMiiOutfitCMale = 0x22,
+    MediumMiiOutfitCFemale = 0x23,
+    LargeMiiOutfitAMale = 0x24,
+    LargeMiiOutfitAFemale = 0x25,
+    LargeMiiOutfitBMale = 0x26,
+    LargeMiiOutfitBFemale = 0x27,
+    LargeMiiOutfitCMale = 0x28,
+    LargeMiiOutfitCFemale = 0x29,
+    MediumMii = 0x2A,
+    SmallMii = 0x2B,
+    LargeMii = 0x2C,
+    MenuPeach = 0x2D,
+    MenuDaisy = 0x2E,
+    MenuRosalina = 0x2F,
+};
+
+} // namespace rkg::header::combo
+
+#endif // RKG_CHARACTER_HPP

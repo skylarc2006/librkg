@@ -1,11 +1,11 @@
 #ifndef RKG_IN_GAME_TIME_HPP
 #define RKG_IN_GAME_TIME_HPP
 
-#include <compare>
 #include <cstdint>
-#include <expected>
 #include <iomanip>
 #include <ostream>
+#include <tuple>
+#include <variant>
 
 namespace rkg::header {
 
@@ -37,7 +37,7 @@ private:
         const auto seconds{static_cast<std::uint16_t>(totalMilliseconds / 1000 % 60)};
         const auto milliseconds{static_cast<std::uint16_t>(totalMilliseconds % 1000)};
 
-        return {.minutes = minutes, .seconds = seconds, .milliseconds = milliseconds};
+        return {minutes, seconds, milliseconds};
     }
 
 public:
@@ -47,9 +47,9 @@ public:
     /// @brief 5,999,999 ms = 99m 59s 999ms
     static constexpr std::uint32_t kMaxTotalMilliseconds{5'999'999};
 
-    [[nodiscard]] static constexpr std::expected<InGameTime, Error> create(std::uint16_t minutes,
+    [[nodiscard]] static constexpr std::variant<InGameTime, Error> create(std::uint16_t minutes,
             std::uint16_t seconds, std::uint16_t milliseconds);
-    [[nodiscard]] static constexpr std::expected<InGameTime, Error> createFromTotalMilliseconds(
+    [[nodiscard]] static constexpr std::variant<InGameTime, Error> createFromTotalMilliseconds(
             std::uint32_t totalMilliseconds);
 
     [[nodiscard]] constexpr std::uint32_t totalMilliseconds() const;
@@ -64,15 +64,21 @@ public:
         return m_milliseconds;
     }
 
-    constexpr std::expected<void, InGameTime::Error> setMinutes(std::uint16_t minutes);
-    constexpr std::expected<void, InGameTime::Error> setSeconds(std::uint16_t seconds);
-    constexpr std::expected<void, InGameTime::Error> setMilliseconds(std::uint16_t milliseconds);
+    constexpr std::variant<std::monostate, InGameTime::Error> setMinutes(std::uint16_t minutes);
+    constexpr std::variant<std::monostate, InGameTime::Error> setSeconds(std::uint16_t seconds);
+    constexpr std::variant<std::monostate, InGameTime::Error> setMilliseconds(
+            std::uint16_t milliseconds);
 
     constexpr InGameTime operator+(const InGameTime &other) const;
     constexpr InGameTime operator-(const InGameTime &other) const;
     constexpr InGameTime &operator+=(const InGameTime &other);
     constexpr InGameTime &operator-=(const InGameTime &other);
-    constexpr auto operator<=>(const InGameTime &other) const = default;
+    constexpr auto operator<(const InGameTime &other) const;
+    constexpr auto operator<=(const InGameTime &other) const;
+    constexpr auto operator==(const InGameTime &other) const;
+    constexpr auto operator>=(const InGameTime &other) const;
+    constexpr auto operator>(const InGameTime &other) const;
+    constexpr auto operator!=(const InGameTime &other) const;
 };
 
 constexpr std::uint32_t InGameTime::totalMilliseconds() const {
@@ -83,47 +89,47 @@ constexpr InGameTime::InGameTime(const std::uint16_t minutes, const std::uint16_
         const std::uint16_t milliseconds)
     : m_minutes{minutes}, m_seconds{seconds}, m_milliseconds{milliseconds} {}
 
-constexpr std::expected<InGameTime, InGameTime::Error> InGameTime::create(
+constexpr std::variant<InGameTime, InGameTime::Error> InGameTime::create(
         const std::uint16_t minutes, const std::uint16_t seconds,
         const std::uint16_t milliseconds) {
     if (minutes > kMaxMinutes || seconds > kMaxSeconds || milliseconds > kMaxMilliseconds) {
-        return std::unexpected(Error::InvalidInGameTimeElement);
+        return Error::InvalidInGameTimeElement;
     }
 
     return InGameTime{minutes, seconds, milliseconds};
 }
 
-constexpr std::expected<InGameTime, InGameTime::Error> InGameTime::createFromTotalMilliseconds(
+constexpr std::variant<InGameTime, InGameTime::Error> InGameTime::createFromTotalMilliseconds(
         const std::uint32_t totalMilliseconds) {
     if (totalMilliseconds > kMaxTotalMilliseconds) {
-        return std::unexpected(Error::InvalidInGameTimeElement);
+        return Error::InvalidInGameTimeElement;
     }
-    const auto timer{totalMillisecondsToTimer(totalMilliseconds)};
-    return InGameTime{timer.minutes, timer.seconds, timer.milliseconds};
+    const auto [minutes, seconds, milliseconds]{totalMillisecondsToTimer(totalMilliseconds)};
+    return InGameTime{minutes, seconds, milliseconds};
 }
 
-constexpr std::expected<void, InGameTime::Error> InGameTime::setMinutes(
+constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setMinutes(
         const std::uint16_t minutes) {
     if (minutes > kMaxMinutes) {
-        return std::unexpected(Error::InvalidInGameTimeElement);
+        return Error::InvalidInGameTimeElement;
     }
     m_minutes = minutes;
     return {};
 }
 
-constexpr std::expected<void, InGameTime::Error> InGameTime::setSeconds(
+constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setSeconds(
         const std::uint16_t seconds) {
     if (seconds > kMaxSeconds) {
-        return std::unexpected(Error::InvalidInGameTimeElement);
+        return Error::InvalidInGameTimeElement;
     }
     m_seconds = seconds;
     return {};
 }
 
-constexpr std::expected<void, InGameTime::Error> InGameTime::setMilliseconds(
+constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setMilliseconds(
         const std::uint16_t milliseconds) {
     if (milliseconds > kMaxMilliseconds) {
-        return std::unexpected(Error::InvalidInGameTimeElement);
+        return Error::InvalidInGameTimeElement;
     }
     m_milliseconds = milliseconds;
     return {};
@@ -166,6 +172,36 @@ constexpr InGameTime InGameTime::operator-(const InGameTime &other) const {
     InGameTime result{*this};
     result -= other;
     return result;
+}
+
+constexpr auto InGameTime::operator<(const InGameTime &other) const {
+    return std::tie(m_minutes, m_seconds, m_milliseconds) <
+            std::tie(other.m_minutes, other.m_seconds, other.m_milliseconds);
+}
+
+constexpr auto InGameTime::operator<=(const InGameTime &other) const {
+    return std::tie(m_minutes, m_seconds, m_milliseconds) <=
+            std::tie(other.m_minutes, other.m_seconds, other.m_milliseconds);
+}
+
+constexpr auto InGameTime::operator==(const InGameTime &other) const {
+    return std::tie(m_minutes, m_seconds, m_milliseconds) ==
+            std::tie(other.m_minutes, other.m_seconds, other.m_milliseconds);
+}
+
+constexpr auto InGameTime::operator>=(const InGameTime &other) const {
+    return std::tie(m_minutes, m_seconds, m_milliseconds) >=
+            std::tie(other.m_minutes, other.m_seconds, other.m_milliseconds);
+}
+
+constexpr auto InGameTime::operator>(const InGameTime &other) const {
+    return std::tie(m_minutes, m_seconds, m_milliseconds) >
+            std::tie(other.m_minutes, other.m_seconds, other.m_milliseconds);
+}
+
+constexpr auto InGameTime::operator!=(const InGameTime &other) const {
+    return std::tie(m_minutes, m_seconds, m_milliseconds) !=
+            std::tie(other.m_minutes, other.m_seconds, other.m_milliseconds);
 }
 
 /// @brief Formats InGameTime object as 'MM:SS.sss'.
