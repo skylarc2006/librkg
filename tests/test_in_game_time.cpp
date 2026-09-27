@@ -22,26 +22,26 @@ static void testInvalidMillisecondsCreate() {
 }
 
 static void testInvalidMinutesSet() {
-    InGameTime time{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
+    auto time{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
     assert(std::holds_alternative<InGameTime::Error>(time.setMinutes(102)));
 }
 
 static void testInvalidSecondsSet() {
-    InGameTime time{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
+    auto time{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
     assert(std::holds_alternative<InGameTime::Error>(time.setSeconds(75)));
 }
 
 static void testInvalidMillisecondsSet() {
-    InGameTime time{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
+    auto time{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
     assert(std::holds_alternative<InGameTime::Error>(time.setMilliseconds(1564)));
 }
 
 static void testValidInGameTimes() {
-    InGameTime time1{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
-    InGameTime time2{std::get<InGameTime>(InGameTime::create(1, 3, 904))};
-    InGameTime time3{std::get<InGameTime>(InGameTime::create(5, 59, 999))};
-    InGameTime time4{std::get<InGameTime>(InGameTime::create(99, 59, 999))};
-    InGameTime time5{std::get<InGameTime>(InGameTime::create(1, 44, 497))};
+    auto time1{std::get<InGameTime>(InGameTime::create(0, 0, 0))};
+    auto time2{std::get<InGameTime>(InGameTime::create(1, 3, 904))};
+    auto time3{std::get<InGameTime>(InGameTime::create(5, 59, 999))};
+    auto time4{std::get<InGameTime>(InGameTime::create(99, 59, 999))};
+    auto time5{std::get<InGameTime>(InGameTime::create(1, 44, 497))};
 
     time1.setMinutes(10);
     time1.setSeconds(1);

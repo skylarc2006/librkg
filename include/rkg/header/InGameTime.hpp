@@ -13,9 +13,17 @@ namespace rkg::header {
 class InGameTime {
 public:
     enum class Error {
-        InvalidInGameTimeElement, ///< Minutes, seconds, or milliseconds field contains a
-                                  ///< semantically invalid value.
+        MinutesInvalid,
+        SecondsInvalid,
+        MillisecondsInvalid,
+        TotalMillisecondsInvalid,
     };
+
+    static constexpr std::uint16_t kMaxMinutes{99};
+    static constexpr std::uint16_t kMaxSeconds{59};
+    static constexpr std::uint16_t kMaxMilliseconds{999};
+    /// @brief 5,999,999 ms = 99m 59s 999ms
+    static constexpr std::uint32_t kMaxTotalMilliseconds{5'999'999};
 
 private:
     std::uint16_t m_minutes{};
@@ -41,12 +49,6 @@ private:
     }
 
 public:
-    static constexpr std::uint16_t kMaxMinutes{99};
-    static constexpr std::uint16_t kMaxSeconds{59};
-    static constexpr std::uint16_t kMaxMilliseconds{999};
-    /// @brief 5,999,999 ms = 99m 59s 999ms
-    static constexpr std::uint32_t kMaxTotalMilliseconds{5'999'999};
-
     [[nodiscard]] static constexpr std::variant<InGameTime, Error> create(std::uint16_t minutes,
             std::uint16_t seconds, std::uint16_t milliseconds);
     [[nodiscard]] static constexpr std::variant<InGameTime, Error> createFromTotalMilliseconds(
@@ -92,8 +94,14 @@ constexpr InGameTime::InGameTime(const std::uint16_t minutes, const std::uint16_
 constexpr std::variant<InGameTime, InGameTime::Error> InGameTime::create(
         const std::uint16_t minutes, const std::uint16_t seconds,
         const std::uint16_t milliseconds) {
-    if (minutes > kMaxMinutes || seconds > kMaxSeconds || milliseconds > kMaxMilliseconds) {
-        return Error::InvalidInGameTimeElement;
+    if (minutes > kMaxMinutes) {
+        return Error::MinutesInvalid;
+    }
+    if (seconds > kMaxSeconds) {
+        return Error::SecondsInvalid;
+    }
+    if (milliseconds > kMaxMilliseconds) {
+        return Error::MillisecondsInvalid;
     }
 
     return InGameTime{minutes, seconds, milliseconds};
@@ -102,7 +110,7 @@ constexpr std::variant<InGameTime, InGameTime::Error> InGameTime::create(
 constexpr std::variant<InGameTime, InGameTime::Error> InGameTime::createFromTotalMilliseconds(
         const std::uint32_t totalMilliseconds) {
     if (totalMilliseconds > kMaxTotalMilliseconds) {
-        return Error::InvalidInGameTimeElement;
+        return Error::TotalMillisecondsInvalid;
     }
     const auto [minutes, seconds, milliseconds]{totalMillisecondsToTimer(totalMilliseconds)};
     return InGameTime{minutes, seconds, milliseconds};
@@ -111,7 +119,7 @@ constexpr std::variant<InGameTime, InGameTime::Error> InGameTime::createFromTota
 constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setMinutes(
         const std::uint16_t minutes) {
     if (minutes > kMaxMinutes) {
-        return Error::InvalidInGameTimeElement;
+        return Error::MinutesInvalid;
     }
     m_minutes = minutes;
     return {};
@@ -120,7 +128,7 @@ constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setMinutes
 constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setSeconds(
         const std::uint16_t seconds) {
     if (seconds > kMaxSeconds) {
-        return Error::InvalidInGameTimeElement;
+        return Error::SecondsInvalid;
     }
     m_seconds = seconds;
     return {};
@@ -129,7 +137,7 @@ constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setSeconds
 constexpr std::variant<std::monostate, InGameTime::Error> InGameTime::setMilliseconds(
         const std::uint16_t milliseconds) {
     if (milliseconds > kMaxMilliseconds) {
-        return Error::InvalidInGameTimeElement;
+        return Error::MillisecondsInvalid;
     }
     m_milliseconds = milliseconds;
     return {};
