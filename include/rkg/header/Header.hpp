@@ -17,7 +17,6 @@ class Header {
     // Date m_dateSet{};
     // Controller m_controller{};
     // bool m_compressed{};
-    // TransmissionMod m_transmissionMod{};
     // GhostType m_ghostType{};
     // DriftType m_driftType{};
     // std::uint16_t m_decompressedInputDataLength{};
