@@ -2,7 +2,7 @@
 #define RKG_GHOST_TYPE_HPP
 
 namespace rkg::header {
-    
+
 enum class GhostType {
     PlayerBest = 0x01,
     WorldRecord = 0x02,
@@ -43,7 +43,7 @@ enum class GhostType {
     NormalStaff = 0x25,
     ExpertStaff = 0x26,
 };
-    
+
 }
 
 #endif // RKG_GHOST_TYPE_HPP

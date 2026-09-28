@@ -2,7 +2,7 @@
 #define RKG_CONTROLLER_HPP
 
 namespace rkg::header {
-    
+
 enum class Controller {
     WiiWheel = 0x00,
     Nunchuk = 0x01,

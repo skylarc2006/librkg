@@ -8,6 +8,6 @@ enum class DriftType {
     Automatic = 0x01,
 };
 
-}
+} // namespace rkg::header
 
 #endif // RKG_DRIFT_TYPE_HPP

@@ -1,6 +1,6 @@
 #include "test_date.hpp"
-#include <rkg/header/Date.hpp>
 #include <cassert>
+#include <rkg/header/Date.hpp>
 #include <variant>
 
 using namespace rkg::header;
