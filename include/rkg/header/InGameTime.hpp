@@ -30,7 +30,7 @@ private:
     std::uint16_t m_seconds{};
     std::uint16_t m_milliseconds{};
 
-    [[nodiscard]] constexpr InGameTime(std::uint16_t minutes, std::uint16_t seconds,
+    constexpr InGameTime(std::uint16_t minutes, std::uint16_t seconds,
             std::uint16_t milliseconds);
 
     struct Timer {

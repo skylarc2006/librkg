@@ -25,7 +25,7 @@ private:
     std::uint16_t m_month{};
     std::uint16_t m_day{};
 
-    [[nodiscard]] constexpr Date(std::uint16_t year, std::uint16_t month, std::uint16_t day);
+    constexpr Date(std::uint16_t year, std::uint16_t month, std::uint16_t day);
 
 public:
     [[nodiscard]] static constexpr std::variant<Date, Error> create(std::uint16_t year,

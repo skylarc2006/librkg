@@ -96,7 +96,7 @@ private:
     Character m_character{};
     Vehicle m_vehicle{};
 
-    [[nodiscard]] constexpr Combo(Character character, Vehicle vehicle);
+    constexpr Combo(Character character, Vehicle vehicle);
 
 public:
     [[nodiscard]] static constexpr std::variant<Combo, Error> create(Character character,

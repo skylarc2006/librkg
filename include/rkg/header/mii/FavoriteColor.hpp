@@ -1,7 +1,6 @@
 #ifndef RKG_FAVORITE_COLOR_HPP
 #define RKG_FAVORITE_COLOR_HPP
 
-
 namespace rkg::header::mii {
 
 enum class FavoriteColor {
